@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, Mock, call
 from becs import EVT_COMPONENT_DEFINED, EVT_COMPONENT_REMOVED, EVT_ENTITY_ADDED, EVT_ENTITY_REMOVED, World
 from becs.exceptions import ComponentInstanceNotFound, ComponentNotFound, EntityNotFound
 from becs.meta import ComponentMeta, FieldMeta
+from becs.reactive_dict import EVT_ITEM_CHANGED
 
 
 class WorldTests(TestCase):
@@ -66,9 +67,12 @@ class WorldTests(TestCase):
         w._cid.next = Mock(return_value="abc")
 
         # mock internal data structure
+        comp_instance = MagicMock()
+        comp_instance.on = Mock()
+
         w._entities["123"] = {}
         w._componentMeta["test"] = MagicMock()
-        w._componentMeta["test"].instantiate = Mock()
+        w._componentMeta["test"].instantiate = Mock(return_value=comp_instance)
 
         cid = w.add_component("123", "test")
 
@@ -81,6 +85,7 @@ class WorldTests(TestCase):
             "entity_id": "123",
             "component": "test"
         })
+        comp_instance.on.assert_called_once_with(EVT_ITEM_CHANGED, w._on_component_modified)
 
     def test_remove_component(self):
         w = World()
@@ -91,7 +96,9 @@ class WorldTests(TestCase):
         # Mock internal structure
         w._entities["123"] = {"test": "abc"}
         w._componentMeta["test"] = {}
-        w._components["abc"] = {}
+        comp_instance = MagicMock()
+        comp_instance.off = Mock()
+        w._components["abc"] = comp_instance
 
         self.assertTrue("abc" in w._components)
         self.assertTrue("test" in w._entities["123"])
@@ -101,6 +108,7 @@ class WorldTests(TestCase):
         w.fire.assert_called_with(EVT_COMPONENT_REMOVED, "123", "abc", "test")
         self.assertTrue("abc" not in w._components)
         self.assertTrue("test" not in w._entities["123"])
+        comp_instance.off.assert_called_once_with(EVT_ITEM_CHANGED, w._on_component_modified)
 
     def test_get_component_meta(self):
         w = World()

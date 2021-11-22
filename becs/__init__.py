@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Type
 from becs.atomic import AtomicID
 from becs.exceptions import ComponentInstanceNotFound, ComponentNotFound, EntityNotFound
 from becs.meta import ComponentMeta, FieldMeta
-from becs.reactive_dict import EVT_ITEM_ADDED, EVT_ITEM_REMOVED, ReactiveDict
+from becs.reactive_dict import EVT_ITEM_ADDED, EVT_ITEM_CHANGED, EVT_ITEM_REMOVED, ReactiveDict
 from becs.events import EventDispatcherMixin
 
 EVT_ENTITY_ADDED = "entity-added"
@@ -14,7 +14,7 @@ EVT_COMPONENT_DEFINED = "component-defined"
 
 class World(EventDispatcherMixin):
     _entities: Dict[str, Dict[str, str]]
-    _components: Dict[str, Dict[str, Any]]
+    _components: Dict[str, ReactiveDict]
     _componentMeta: Dict[str, ComponentMeta]
     _eid: AtomicID
     _cid: AtomicID
@@ -67,12 +67,14 @@ class World(EventDispatcherMixin):
         
         id = str(self._cid.next())
 
-        comp_instance = self._componentMeta[component].instantiate()
+        meta = self._componentMeta[component]
+        comp_instance = meta.instantiate()
         comp_instance.tag = {
             "id": id,
             "entity_id": entity_id,
             "component": component
         }
+        comp_instance.on(EVT_ITEM_CHANGED, self._on_component_modified)
 
         self._components[id] = comp_instance
         self._entities[entity_id][component] = id
@@ -128,7 +130,11 @@ class World(EventDispatcherMixin):
         if cid not in self._components:
             raise ComponentInstanceNotFound(cid)
 
+        self._components[cid].off(EVT_ITEM_CHANGED, self._on_component_modified)
+
         del self._components[cid]
 
         self.fire(EVT_COMPONENT_REMOVED, entity_id, cid, component)
 
+    def _on_component_modified(self, component, key, value):
+        pass
