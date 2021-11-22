@@ -66,7 +66,15 @@ class World(EventDispatcherMixin):
             raise ComponentNotFound(component)
         
         id = str(self._cid.next())
-        self._components[id] = self._componentMeta[component].instantiate()
+
+        comp_instance = self._componentMeta[component].instantiate()
+        comp_instance.tag = {
+            "id": id,
+            "entity_id": entity_id,
+            "component": component
+        }
+
+        self._components[id] = comp_instance
         self._entities[entity_id][component] = id
 
         self.fire(EVT_COMPONENT_ADDED, entity_id, id, component)

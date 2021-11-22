@@ -1,12 +1,13 @@
 from typing import Any, Dict, List, Optional
 from becs.events import EventDispatcherMixin
+from becs.tag import TagMixin
 
 EVT_ITEM_ADDED = "item-added"
 EVT_ITEM_REMOVED = "item-removed"
 EVT_ITEM_CHANGED = "item-changed"
 
 
-class ReactiveDict(Dict[str, Any], EventDispatcherMixin):
+class ReactiveDict(Dict[str, Any], EventDispatcherMixin, TagMixin):
     def __init__(self, *kargs, **kwargs):
         self.__keys_changed: List = []
         super().__init__(*kargs, **kwargs)

@@ -76,6 +76,11 @@ class WorldTests(TestCase):
         w._componentMeta["test"].instantiate.assert_called()
         self.assertTrue(w._entities["123"]["test"] == "abc")
         self.assertTrue(cid == "abc")
+        self.assertDictEqual(w._components[cid].tag, {
+            "id": cid,
+            "entity_id": "123",
+            "component": "test"
+        })
 
     def test_remove_component(self):
         w = World()
