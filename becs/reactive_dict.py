@@ -22,12 +22,12 @@ class ReactiveDict(Dict[str, Any], EventDispatcherMixin):
 
         result = super().__setitem__(__k, v)
 
-        self.fire(evt, __k, v, old_val)
+        self.fire(evt, self,  __k, v, old_val)
         return result
 
     def __delitem__(self, __v) -> None:
         super().__delitem__(__v)
-        self.fire(EVT_ITEM_REMOVED, __v)
+        self.fire(EVT_ITEM_REMOVED, self, __v)
 
     def __getitem__(self, __k):
         if __k in self.__keys_changed:

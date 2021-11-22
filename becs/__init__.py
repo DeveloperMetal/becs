@@ -123,3 +123,4 @@ class World(EventDispatcherMixin):
         del self._components[cid]
 
         self.fire(EVT_COMPONENT_REMOVED, entity_id, cid, component)
+

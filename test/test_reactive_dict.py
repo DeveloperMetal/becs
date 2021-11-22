@@ -24,7 +24,7 @@ class ReactiveDictTests(TestCase):
 
         rd["new_item"] = 1
 
-        mock_added.assert_called_once_with("new_item", 1, None)
+        mock_added.assert_called_once_with(rd, "new_item", 1, None)
         mock_removed.assert_not_called()
         mock_modified.assert_not_called()
 
@@ -42,8 +42,8 @@ class ReactiveDictTests(TestCase):
         rd["to_remove"] = 1
         del rd["to_remove"]
 
-        mock_added.assert_called_once_with("to_remove", 1, None)
-        mock_removed.assert_called_once_with("to_remove")
+        mock_added.assert_called_once_with(rd, "to_remove", 1, None)
+        mock_removed.assert_called_once_with(rd, "to_remove")
         mock_modified.assert_not_called()
 
     def test_item_modified_event(self):
@@ -60,9 +60,9 @@ class ReactiveDictTests(TestCase):
         rd["to_modify"] = 1
         rd["to_modify"] = 2
 
-        mock_added.assert_called_once_with("to_modify", 1, None)
+        mock_added.assert_called_once_with(rd, "to_modify", 1, None)
         mock_removed.assert_not_called()
-        mock_modified.assert_called_once_with("to_modify", 2, 1)
+        mock_modified.assert_called_once_with(rd, "to_modify", 2, 1)
 
         # reading key resets its "changed" flag
         self.assertListEqual(rd.keys_changed(), ["to_modify"])
