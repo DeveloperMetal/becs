@@ -79,6 +79,22 @@ class World(EventDispatcherMixin):
 
         return self._componentMeta[component]
 
+    def get_component(self, entity_id: str, component: str):
+        if entity_id not in self._entities:
+            raise EntityNotFound(entity_id)
+
+        entity = self._entities[entity_id]
+
+        if component not in entity:
+            raise ComponentNotFound("component")
+
+        cid = entity[component]
+
+        if cid not in self._components:
+            raise ComponentInstanceNotFound(cid)
+
+        return self._components[cid]
+
     def list_entity_components(self, entity_id: str):
         if entity_id not in self._entities:
             raise EntityNotFound(entity_id)

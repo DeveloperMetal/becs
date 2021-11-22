@@ -104,6 +104,16 @@ class WorldTests(TestCase):
 
         self.assertEqual(w.get_component_meta("test"), "test")
 
+    def test_get_component(self):
+        w = World()
+
+        w._entities["123"] = { "test": "abc" }
+        w._components["abc"] = "some component"
+
+        comp = w.get_component("123", "test")
+
+        self.assertEqual(comp, "some component")
+
     def test_list_entity_components(self):
         w = World()
 
@@ -169,3 +179,19 @@ class WorldTests(TestCase):
 
         with self.assertRaises(EntityNotFound):
             w.entity_has_component("123", "test")
+
+    def test_get_component_exceptions(self):
+        w = World()
+
+        with self.assertRaises(EntityNotFound):
+            w.get_component("123", "test")
+
+        w._entities["123"] = {}
+
+        with self.assertRaises(ComponentNotFound):
+            w.get_component("123", "test")
+
+        w._entities["123"]["test"] = "abc"
+
+        with self.assertRaises(ComponentInstanceNotFound):
+            w.get_component("123", "test")
