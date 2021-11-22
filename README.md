@@ -38,5 +38,5 @@ entity_id = w.add_entity("component1", "component2")
 Currently the library will return entity ids. Future versions will return a class instance for ease of use.
 
 ```
-TODO: Add systems, systems tets and documentation
+TODO: Add systems, systems tests and documentation
 ```
