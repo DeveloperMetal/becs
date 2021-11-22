@@ -1,0 +1,8 @@
+*.pyc
+*.coverage
+*.coverage.*
+
+.vscode/
+.tox/
+__pypackages__/
+__pycache__/
