@@ -9,7 +9,7 @@ EVT_ITEM_CHANGED = "item-changed"
 class ReactiveDict(Dict[str, Any], EventDispatcherMixin):
     def __init__(self, *kargs, **kwargs):
         self.__keys_changed: List = []
-        super(*kargs, **kwargs)
+        super().__init__(*kargs, **kwargs)
 
     def __setitem__(self, __k, v) -> None:
         evt = None

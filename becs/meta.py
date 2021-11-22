@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Type
 
+from becs.reactive_dict import ReactiveDict
+
 @dataclass
 class FieldMeta:
     label: str
@@ -20,4 +22,4 @@ class ComponentMeta:
         assert(isinstance(self.label, str))
 
     def instantiate(self):
-        return { field.field_name: field.default_value for field in self.fields }
+        return ReactiveDict({ field.field_name: field.default_value for field in self.fields })
